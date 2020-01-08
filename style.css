@@ -5,3 +5,19 @@
 div{
     font-size: 20px;
 }
+
+#bar1{
+    background-color: red;
+    height: 40px;
+}
+
+#bar2{
+    background-color: blue;
+    height: 40px;
+}
+
+#bar3{
+    background-color: green;
+    height: 40px;
+}
+
