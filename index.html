@@ -1,25 +1,101 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css">
+	<meta charset="utf-8">
+	<title>My first three.js app</title>
+	<style>
+		body {
+			margin: 0;
+		}
+
+		canvas {
+			width: 100%;
+			height: 100%
+		}
+	</style>
 </head>
 
 <body>
-    <div id="info"></div>
-    <div class="orientation">
-        <div id="alpha"></div>
-        <div id="beta"></div>
-        <div id="gamma"></div>
-        <div id="bar1"></div>
-        <div id="bar2"></div>
-        <div id="bar3"></div>
-    </div>
-    <script src="sensorsAPI.js"></script>
+	<script src="js/three.js"></script>
+	<script src="TeapotBufferGeometry.js"></script>
+	<script>
+		var scene = new THREE.Scene();
+
+		camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 80000);
+		camera.position.set(0, 4000, 0);
+		camera.lookAt(0, 0, 0);
+
+
+		var renderer = new THREE.WebGLRenderer();
+		renderer.setSize(window.innerWidth, window.innerHeight);
+		document.body.appendChild(renderer.domElement);
+		var geometry = new THREE.BoxGeometry(1, 1, 1);
+		var materialColor = new THREE.Color();
+		// materialColor.setRGB( 1.0, 1.0, 1.0 );
+		// reflectiveMaterial = new THREE.MeshPhongMaterial( { color: materialColor, envMap: textureCube, side: THREE.DoubleSide } );
+		// var cube = new THREE.Mesh(geometry, material);
+		// scene.add(cube);
+
+		effectController = {
+			shininess: 40.0,
+			ka: 0.17,
+			kd: 0.51,
+			ks: 0.2,
+			metallic: true,
+			hue: 0.121,
+			saturation: 0.73,
+			lightness: 0.66,
+			lhue: 0.04,
+			lsaturation: 0.01,	// non-zero so that fractions will be shown
+			llightness: 1.0,
+			// bizarrely, if you initialize these with negative numbers, the sliders
+			// will not show any decimal places.
+			lx: 0.32,
+			ly: 0.39,
+			lz: 0.7,
+			newTess: 15,
+			bottom: true,
+			lid: true,
+			body: true,
+			fitLid: false,
+			nonblinn: false,
+			newShading: "glossy"
+		};
+		var teapotSize = 400;
+		var tess = - 1;	// force initialization
+
+		var teapotGeometry = new TeapotBufferGeometry(teapotSize,
+			tess,
+			effectController.bottom,
+			effectController.lid,
+			effectController.body,
+			effectController.fitLid,
+			!effectController.nonblinn);
+		teapot = new THREE.Mesh(teapotGeometry);
+		scene.add(teapot);
+
+
+		// Update mesh rotation using quaternion.
+		const options = { frequency: 60, referenceFrame: 'device' };
+		const sensorAbs = new RelativeOrientationSensor(options);
+		sensorAbs.onreading = () => {
+			let quaternion = [-sensorAbs.quaternion[0], -sensorAbs.quaternion[2],sensorAbs.quaternion[1], sensorAbs.quaternion[3]];
+			teapot.quaternion.fromArray(quaternion);
+		}
+
+
+
+
+		sensorAbs.start();
+
+		function animate() {
+			requestAnimationFrame(animate);
+
+			renderer.render(scene, camera);
+		}
+		animate();
+	</script>
 </body>
 
 </html>

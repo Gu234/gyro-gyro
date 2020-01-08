@@ -10,12 +10,12 @@ window.addEventListener("devicemotion", function (event) {
 });
 window.addEventListener("deviceorientation", function (event) {
     // console.log('deviceorientation', event);
-    $alpha.innerText = event.alpha;
-    $beta.innerText = event.beta;
-    $gamma.innerText = event.gamma;
-    $bar1.style('width',`${event.alpha}`);
-    $bar2.style('width',`${event.beta}`);
-    $bar3.style('width',`${event.gamma}`);
+    $alpha.innerText = 'yaw ' + event.alpha;
+    $beta.innerText = 'pitch ' + event.beta;
+    $gamma.innerText = 'roll ' + event.gamma;
+    $bar1.style.width = `${event.alpha / 3.6}%`;
+    $bar2.style.width = `${(event.beta + 180) / 3.6}%`;
+    $bar3.style.width = `${(event.gamma + 90) / 1.8}%`;
 });
 
 console.log('hejo');
